@@ -3,10 +3,19 @@
   flex-direction: column;
   align-items: center;
   padding: 2rem;
-  font-family: sans-serif;
-  background: #222;
+  font-family: 'Inter', sans-serif;
   color: #fff;
   min-height: 100vh;
+  /* Removed solid background to show 3D */
+  pointer-events: none;
+  /* Let clicks pass through to 3D if needed, but we need inputs to work */
+}
+
+/* Re-enable pointer events for UI */
+.controls,
+.sudoku-grid,
+h1 {
+  pointer-events: auto;
 }
 
 .controls {
@@ -18,16 +27,21 @@
 button {
   padding: 0.5rem 1rem;
   cursor: pointer;
-  background: #ff00ff;
-  border: none;
+  background: rgba(255, 0, 255, 0.8);
+  border: 1px solid #ff00ff;
   color: white;
   font-weight: bold;
+  backdrop-filter: blur(5px);
+  border-radius: 4px;
 }
 
 .sudoku-grid {
   display: flex;
   flex-direction: column;
-  border: 2px solid #555;
+  border: 2px solid #ff00ff;
+  background: rgba(0, 0, 0, 0.5);
+  /* Glass */
+  backdrop-filter: blur(10px);
 }
 
 .row {
@@ -39,25 +53,26 @@ button {
   height: 40px;
   text-align: center;
   font-size: 1.2rem;
-  border: 1px solid #444;
-  background: #333;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: transparent;
   color: #fff;
 }
 
 .cell:focus {
   outline: 2px solid #ff00ff;
-  background: #444;
+  background: rgba(255, 0, 255, 0.2);
 }
 
 .cell.fixed {
-  background: #222;
-  color: #888;
+  background: rgba(255, 255, 255, 0.1);
+  color: #ccc;
   font-weight: bold;
 }
 
 .row:nth-child(3n) {
   border-bottom: 2px solid #ff00ff;
 }
+
 .row:last-child {
   border-bottom: none;
 }
@@ -65,6 +80,7 @@ button {
 .cell:nth-child(3n) {
   border-right: 2px solid #ff00ff;
 }
+
 .cell:last-child {
   border-right: none;
 }
