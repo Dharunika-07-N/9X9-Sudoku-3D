@@ -22,6 +22,23 @@ export function NeoTokyo({ isLightMode }) {
     useFrame(() => {
         if (!meshRef.current) return;
 
+        // Only update matrices once or slightly rotate to save perf
+        // Constant updating might be glitchy if not handled well
+        // Let's just set them once in a layout effect or similar if they were static
+        // But design doc said "Slow rotation around city" -> Camera moves. Buildings are static?
+        // Let's keep them static to ensure they render.
+
+        // Actually, let's just render them static.
+    });
+
+    // Use a layout effect to set positions ONCE
+    useMemo(() => {
+        // We can't set matrices here easily without ref access, wait for ref.
+    }, []);
+
+    useFrame(() => {
+        if (!meshRef.current) return;
+        // Ensure they are set at least once
         buildings.forEach((data, i) => {
             dummy.position.set(data.x, -10, data.z);
             dummy.scale.set(data.scale[0], data.scale[1], data.scale[2]);
@@ -31,9 +48,9 @@ export function NeoTokyo({ isLightMode }) {
         meshRef.current.instanceMatrix.needsUpdate = true;
     });
 
-    const color = isLightMode ? "#e0e0e0" : "#220022";
-    const emissive = isLightMode ? "#ffffff" : "#330033";
-    const fogColor = isLightMode ? "#f0f8ff" : "#000000";
+    const color = isLightMode ? "#e0e0e0" : "#ff00ff"; // Brighter color for dark mode test
+    const emissive = isLightMode ? "#ffffff" : "#ff00ff";
+    const fogColor = isLightMode ? "#f0f8ff" : "#050005";
 
     return (
         <group>
@@ -42,7 +59,7 @@ export function NeoTokyo({ isLightMode }) {
                 <meshStandardMaterial
                     color={color}
                     emissive={emissive}
-                    emissiveIntensity={isLightMode ? 0.2 : 0.5}
+                    emissiveIntensity={0.5}
                     roughness={0.2}
                     metalness={0.8}
                 />
@@ -50,12 +67,11 @@ export function NeoTokyo({ isLightMode }) {
 
             {/* Grid Floor */}
             <gridHelper
-                args={[100, 50, isLightMode ? 0x0066cc : 0xff00ff, isLightMode ? 0xcccccc : 0x00ffff]}
+                args={[100, 50, isLightMode ? 0x0066cc : 0xff00ff, isLightMode ? 0xcccccc : 0x440044]}
                 position={[0, -10, 0]}
             />
 
-            {/* Fog for depth */}
-            <fog attach="fog" args={[fogColor, 10, 50]} />
+            <fog attach="fog" args={[fogColor, 10, 60]} />
         </group>
     );
 }
