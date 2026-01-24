@@ -17,7 +17,6 @@ function App() {
       if (!selectedCell) return;
       const { row, col } = selectedCell;
 
-      // If cell is fixed, ignore
       if (game.initial[row][col] !== BLANK) return;
 
       if (e.key >= '1' && e.key <= '9') {
@@ -67,17 +66,17 @@ function App() {
       />
 
       <div className="app-container">
-        <h1>Sudoku Cosmic Odyssey</h1>
-        <div className="controls">
-          <button onClick={() => startNewGame('easy')}>Easy</button>
-          <button onClick={() => startNewGame('medium')}>Medium</button>
-          <button onClick={() => startNewGame('hard')}>Hard</button>
+        <h1>Sudoku Cosmic</h1>
+
+        <div className="instructions-panel">
+          <p>COMMAND CENTER</p>
+          <p>Select Cell • Type 1-9 • Navigation Keys</p>
         </div>
 
-        {/* Helper instructions */}
-        <div style={{ background: 'rgba(0,0,0,0.5)', padding: '10px', borderRadius: '8px' }}>
-          <p>Select a cell and type 1-9</p>
-          <p>Use Arrow Keys to move</p>
+        <div className="controls">
+          <button onClick={() => startNewGame('easy')}>Initiate Easy</button>
+          <button onClick={() => startNewGame('medium')}>Initiate Medium</button>
+          <button onClick={() => startNewGame('hard')}>Initiate Hard</button>
         </div>
       </div>
     </>

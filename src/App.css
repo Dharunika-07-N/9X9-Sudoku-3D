@@ -1,86 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap');
+
+:root {
+  --primary-color: #ff00ff;
+  --secondary-color: #00ffff;
+  --bg-color: #050005;
+  --glass-bg: rgba(20, 0, 20, 0.4);
+  --glass-border: rgba(255, 0, 255, 0.3);
+  --glass-blur: 12px;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  background-color: var(--bg-color);
+  font-family: 'Rajdhani', sans-serif;
+}
+
 .app-container {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
+  height: 100vh;
   padding: 2rem;
-  font-family: 'Inter', sans-serif;
-  color: #fff;
-  min-height: 100vh;
-  /* Removed solid background to show 3D */
+  box-sizing: border-box;
   pointer-events: none;
-  /* Let clicks pass through to 3D if needed, but we need inputs to work */
+  /* Pass clicks to 3D by default */
+  color: #fff;
 }
 
-/* Re-enable pointer events for UI */
-.controls,
-.sudoku-grid,
+/* Header */
 h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 3rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin: 0;
+  background: linear-gradient(to right, #fff, var(--primary-color), var(--secondary-color));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
   pointer-events: auto;
+  text-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+  animation: glow 3s ease-in-out infinite alternate;
 }
 
+@keyframes glow {
+  from {
+    text-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+  }
+
+  to {
+    text-shadow: 0 0 20px rgba(0, 255, 255, 0.5), 0 0 40px var(--primary-color);
+  }
+}
+
+/* Controls */
 .controls {
-  margin-bottom: 2rem;
-  gap: 1rem;
+  pointer-events: auto;
   display: flex;
+  gap: 1.5rem;
+  background: var(--glass-bg);
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  margin-top: 2rem;
 }
 
 button {
-  padding: 0.5rem 1rem;
-  cursor: pointer;
-  background: rgba(255, 0, 255, 0.8);
-  border: 1px solid #ff00ff;
-  color: white;
-  font-weight: bold;
-  backdrop-filter: blur(5px);
-  border-radius: 4px;
-}
-
-.sudoku-grid {
-  display: flex;
-  flex-direction: column;
-  border: 2px solid #ff00ff;
-  background: rgba(0, 0, 0, 0.5);
-  /* Glass */
-  backdrop-filter: blur(10px);
-}
-
-.row {
-  display: flex;
-}
-
-.cell {
-  width: 40px;
-  height: 40px;
-  text-align: center;
-  font-size: 1.2rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
   background: transparent;
+  border: 1px solid var(--primary-color);
   color: #fff;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 0.9rem;
+  padding: 0.8rem 2rem;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  border-radius: 30px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-.cell:focus {
-  outline: 2px solid #ff00ff;
-  background: rgba(255, 0, 255, 0.2);
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 0, 255, 0.4), transparent);
+  transition: 0.5s;
 }
 
-.cell.fixed {
-  background: rgba(255, 255, 255, 0.1);
-  color: #ccc;
+button:hover::before {
+  left: 100%;
+}
+
+button:hover {
+  background: rgba(255, 0, 255, 0.1);
+  box-shadow: 0 0 15px var(--primary-color);
+  border-color: var(--secondary-color);
+  transform: translateY(-2px);
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* Instructions */
+.instructions-panel {
+  pointer-events: auto;
+  background: var(--glass-bg);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  padding: 1.5rem;
+  border-radius: 12px;
+  backdrop-filter: blur(var(--glass-blur));
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.instructions-panel::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 20%;
+  width: 60%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--secondary-color), transparent);
+}
+
+.instructions-panel p {
+  margin: 0.5rem 0;
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 1px;
+}
+
+.instructions-panel p:first-child {
+  color: var(--secondary-color);
   font-weight: bold;
-}
-
-.row:nth-child(3n) {
-  border-bottom: 2px solid #ff00ff;
-}
-
-.row:last-child {
-  border-bottom: none;
-}
-
-.cell:nth-child(3n) {
-  border-right: 2px solid #ff00ff;
-}
-
-.cell:last-child {
-  border-right: none;
 }
