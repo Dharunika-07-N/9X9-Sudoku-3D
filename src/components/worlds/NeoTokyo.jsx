@@ -1,8 +1,8 @@
-import { useMemo, useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-export function NeoTokyo() {
+export function NeoTokyo({ isLightMode }) {
     const meshRef = useRef();
     const count = 200;
 
@@ -12,8 +12,8 @@ export function NeoTokyo() {
         const temp = [];
         for (let i = 0; i < count; i++) {
             const x = (Math.random() - 0.5) * 50;
-            const z = (Math.random() - 0.5) * 50 - 20; // Push back a bit
-            const y = Math.random() * 5 + 2; // Height
+            const z = (Math.random() - 0.5) * 50 - 20;
+            const y = Math.random() * 5 + 2;
             temp.push({ x, z, scale: [Math.random() * 2 + 1, y * 5, Math.random() * 2 + 1] });
         }
         return temp;
@@ -31,19 +31,31 @@ export function NeoTokyo() {
         meshRef.current.instanceMatrix.needsUpdate = true;
     });
 
+    const color = isLightMode ? "#e0e0e0" : "#220022";
+    const emissive = isLightMode ? "#ffffff" : "#330033";
+    const fogColor = isLightMode ? "#f0f8ff" : "#000000";
+
     return (
         <group>
-            {/* City Instances */}
             <instancedMesh ref={meshRef} args={[null, null, count]}>
                 <boxGeometry />
-                <meshStandardMaterial color="#220022" emissive="#330033" emissiveIntensity={0.5} roughness={0.2} metalness={0.8} />
+                <meshStandardMaterial
+                    color={color}
+                    emissive={emissive}
+                    emissiveIntensity={isLightMode ? 0.2 : 0.5}
+                    roughness={0.2}
+                    metalness={0.8}
+                />
             </instancedMesh>
 
             {/* Grid Floor */}
-            <gridHelper args={[100, 50, 0xff00ff, 0x00ffff]} position={[0, -10, 0]} />
+            <gridHelper
+                args={[100, 50, isLightMode ? 0x0066cc : 0xff00ff, isLightMode ? 0xcccccc : 0x00ffff]}
+                position={[0, -10, 0]}
+            />
 
             {/* Fog for depth */}
-            <fog attach="fog" args={['#000000', 10, 50]} />
+            <fog attach="fog" args={[fogColor, 10, 50]} />
         </group>
     );
 }

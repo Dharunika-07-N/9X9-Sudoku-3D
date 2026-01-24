@@ -7,10 +7,20 @@ function App() {
   const [game, setGame] = useState(null);
   const [board, setBoard] = useState([]);
   const [selectedCell, setSelectedCell] = useState(null);
+  const [isLightMode, setIsLightMode] = useState(false);
 
   useEffect(() => {
     startNewGame();
   }, []);
+
+  // Update Body class for global variables
+  useEffect(() => {
+    if (isLightMode) {
+      document.body.classList.add('light-theme');
+    } else {
+      document.body.classList.remove('light-theme');
+    }
+  }, [isLightMode]);
 
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -63,10 +73,16 @@ function App() {
         initialBoard={game?.initial}
         onCellClick={handleCellClick}
         selectedCell={selectedCell}
+        isLightMode={isLightMode}
       />
 
       <div className="app-container">
-        <h1>Sudoku Cosmic</h1>
+        <h1>{isLightMode ? 'Sudoku Solar' : 'Sudoku Cosmic'}</h1>
+
+        {/* Theme Toggle */}
+        <div className="theme-toggle" onClick={() => setIsLightMode(!isLightMode)} title="Toggle Theme">
+          {isLightMode ? '☀️' : '🌑'}
+        </div>
 
         <div className="instructions-panel">
           <p>COMMAND CENTER</p>
