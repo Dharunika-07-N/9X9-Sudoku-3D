@@ -1,6 +1,8 @@
 import { Canvas } from '@react-three/fiber';
 import { ParallaxCamera } from './ParallaxCamera';
-import { OrbitControls } from '@react-three/drei';
+import { NeoTokyo } from './worlds/NeoTokyo';
+import { Rain } from './effects/Rain';
+import { Environment } from '@react-three/drei';
 
 export function Experience() {
     return (
@@ -8,21 +10,21 @@ export function Experience() {
             gl={{ antialias: true, pixelRatio: window.devicePixelRatio }}
             style={{ width: '100vw', height: '100vh', position: 'fixed', top: 0, left: 0, zIndex: -1 }}
         >
-            <color attach="background" args={['#000000']} />
+            <color attach="background" args={['#050005']} />
 
             <ParallaxCamera />
 
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, 10, 10]} intensity={1} color="#ff00ff" />
+            {/* Dynamic Lighting */}
+            <ambientLight intensity={0.2} />
+            <pointLight position={[10, 10, 10]} intensity={1.5} color="#ff00ff" />
+            <spotLight position={[0, 10, 0]} angle={0.5} penumbra={1} intensity={1} color="#00ffff" />
 
-            {/* Test Object for Parallax */}
-            <mesh position={[0, 0, 0]}>
-                <boxGeometry args={[1, 1, 1]} />
-                <meshStandardMaterial color="#00ffff" wireframe />
-            </mesh>
+            {/* World Content */}
+            <NeoTokyo />
+            <Rain />
 
-            {/* Grid Floor Reference */}
-            <gridHelper args={[20, 20, 0xff00ff, 0x222222]} rotation={[Math.PI / 2, 0, 0]} />
+            {/* Environment reflections */}
+            <Environment preset="night" />
         </Canvas>
     );
 }
