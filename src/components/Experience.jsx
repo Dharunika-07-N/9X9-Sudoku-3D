@@ -40,10 +40,10 @@ function SceneContent({ board, initialBoard, onCellClick, selectedCell, isLightM
                 />
             </group>
 
-            <ParticleSystem ref={particleRef} isLightMode={isLightMode} />
+            {/* <ParticleSystem ref={particleRef} isLightMode={isLightMode} /> */}
 
             <NeoTokyo isLightMode={isLightMode} />
-            {tier > 0 && !isLightMode && <Rain />} {/* No Rain in light mode, maybe clear skies? */}
+            {/* {tier > 0 && !isLightMode && <Rain />} */}
 
             {tier > 1 && <GamePostProcessing />}
 

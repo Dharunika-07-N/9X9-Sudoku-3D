@@ -1,6 +1,6 @@
 export const BLANK = 0;
 
-function isValid(board, row, col, num) {
+export function isValid(board, row, col, num) {
   for (let i = 0; i < 9; i++) {
     if (board[row][i] === num) return false;
     if (board[i][col] === num) return false;
@@ -21,7 +21,7 @@ function solveSudoku(board) {
           const j = Math.floor(Math.random() * (i + 1));
           [nums[i], nums[j]] = [nums[j], nums[i]];
         }
-        
+
         for (let num of nums) {
           if (isValid(board, row, col, num)) {
             board[row][col] = num;
@@ -39,20 +39,20 @@ function solveSudoku(board) {
 export function generateSudoku(difficulty = 'easy') {
   // Start with empty
   const board = Array.from({ length: 9 }, () => Array(9).fill(BLANK));
-  
+
   // Fill diagonal boxes (independent)
   for (let i = 0; i < 9; i = i + 3) {
     fillBox(board, i, i);
   }
-  
+
   // Solve to fill rest
   solveSudoku(board);
-  
+
   const solution = board.map(row => [...row]);
-  
+
   // Remove digits based on difficulty
   let attempts = difficulty === 'hard' ? 50 : difficulty === 'medium' ? 40 : 30;
-  
+
   while (attempts > 0) {
     let row = Math.floor(Math.random() * 9);
     let col = Math.floor(Math.random() * 9);
@@ -63,7 +63,7 @@ export function generateSudoku(difficulty = 'easy') {
     board[row][col] = BLANK;
     attempts--;
   }
-  
+
   return { initial: board, solution };
 }
 

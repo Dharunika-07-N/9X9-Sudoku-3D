@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
-import { generateSudoku, BLANK } from './game/sudokuGenerator';
+import { useState, useEffect, useRef } from 'react';
+import { generateSudoku, BLANK, isValid } from './game/sudokuGenerator';
 import { Experience } from './components/Experience';
+import { WinModal } from './components/ui/WinModal';
 import './App.css';
 
 function App() {
@@ -8,6 +9,17 @@ function App() {
   const [board, setBoard] = useState([]);
   const [selectedCell, setSelectedCell] = useState(null);
   const [isLightMode, setIsLightMode] = useState(false);
+  const [isSolving, setIsSolving] = useState(false);
+  const [isGameWon, setIsGameWon] = useState(false);
+  const [difficulty, setDifficulty] = useState('easy');
+  const [solverStatus, setSolverStatus] = useState({
+    action: 'Ready',
+    cell: '-',
+    value: '-',
+    type: '',
+    log: []
+  });
+  const solvingRef = useRef(false);
 
   useEffect(() => {
     startNewGame();
@@ -24,7 +36,7 @@ function App() {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (!selectedCell) return;
+      if (!selectedCell || isSolving || isGameWon) return;
       const { row, col } = selectedCell;
 
       if (game.initial[row][col] !== BLANK) return;
@@ -46,13 +58,27 @@ function App() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedCell, board, game]);
+  }, [selectedCell, board, game, isSolving, isGameWon]);
 
-  const startNewGame = (difficulty = 'easy') => {
-    const newGame = generateSudoku(difficulty);
+  const startNewGame = (diff = 'easy') => {
+    solvingRef.current = false;
+    setIsSolving(false);
+    setIsGameWon(false);
+    setDifficulty(diff);
+    const newGame = generateSudoku(diff);
     setGame(newGame);
     setBoard(newGame.initial.map(row => [...row]));
     setSelectedCell(null);
+  };
+
+  const checkWin = (currentBoard) => {
+    if (!game || !game.solution) return;
+    for (let i = 0; i < 9; i++) {
+      for (let j = 0; j < 9; j++) {
+        if (currentBoard[i][j] !== game.solution[i][j]) return;
+      }
+    }
+    setIsGameWon(true);
   };
 
   const fillCell = (row, col, value) => {
@@ -60,23 +86,132 @@ function App() {
     newBoard[row] = [...newBoard[row]];
     newBoard[row][col] = value;
     setBoard(newBoard);
+    checkWin(newBoard);
   };
 
   const handleCellClick = (row, col) => {
-    setSelectedCell({ row, col });
+    if (!isSolving && !isGameWon) {
+      setSelectedCell({ row, col });
+    }
+  };
+
+  const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+  const solveStepByStep = async () => {
+    if (!game) return;
+
+    // Reset to initial state to ensure clean solve
+    const currentBoard = game.initial.map(row => [...row]);
+    setBoard(currentBoard.map(row => [...row]));
+    setIsSolving(true);
+    setSolverStatus({ action: 'Starting...', cell: '-', value: '-', log: [] });
+    solvingRef.current = true;
+
+    const solved = await solveRecursively(currentBoard);
+
+    setIsSolving(false);
+    solvingRef.current = false;
+
+    if (solved) {
+      setIsGameWon(true);
+    }
+  };
+
+  const solveRecursively = async (tempBoard) => {
+    if (!solvingRef.current) return false;
+
+    for (let row = 0; row < 9; row++) {
+      for (let col = 0; col < 9; col++) {
+        if (tempBoard[row][col] === BLANK) {
+          for (let num = 1; num <= 9; num++) {
+            // Update status
+            const statusMsg = `Trying ${num} at [${row}, ${col}]`;
+            setSolverStatus(prev => ({
+              action: 'Trying',
+              cell: `R${row + 1} C${col + 1}`,
+              value: num,
+              log: [statusMsg, ...prev.log].slice(0, 5)
+            }));
+
+            if (isValid(tempBoard, row, col, num)) {
+              tempBoard[row][col] = num;
+
+              // Update visual state
+              setBoard(tempBoard.map(r => [...r]));
+              await sleep(20); // Delay for visualization
+
+              if (await solveRecursively(tempBoard)) return true;
+
+              // Backtrack
+              setSolverStatus(prev => ({
+                action: 'Backtracking',
+                cell: `R${row + 1} C${col + 1}`,
+                value: 'X',
+                log: [`Backtracking from [${row}, ${col}]`, ...prev.log].slice(0, 5)
+              }));
+
+              tempBoard[row][col] = BLANK;
+              setBoard(tempBoard.map(r => [...r]));
+              // await sleep(5); // Optional: faster backtrack
+            }
+          }
+          return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  const solveGame = () => {
+    if (game && game.solution) {
+      setBoard(game.solution.map(row => [...row]));
+    }
   };
 
   return (
     <>
-      <Experience
-        board={board}
-        initialBoard={game?.initial}
-        onCellClick={handleCellClick}
-        selectedCell={selectedCell}
-        isLightMode={isLightMode}
-      />
+      <div className="board-wrapper">
+        <Experience
+          board={board}
+          initialBoard={game?.initial}
+          onCellClick={handleCellClick}
+          selectedCell={selectedCell}
+          isLightMode={isLightMode}
+        />
+      </div>
 
-      <div className="app-container">
+      {isSolving && (
+        <div className="solver-status-panel">
+          <h3>Solver Logic</h3>
+          <div className="status-item">
+            <span className="label">Action:</span>
+            <span className="value">{solverStatus.action}</span>
+          </div>
+          <div className="status-item">
+            <span className="label">Cell:</span>
+            <span className="value">{solverStatus.cell}</span>
+          </div>
+          <div className="status-item">
+            <span className="label">Value:</span>
+            <span className={`value ${solverStatus.type || ''}`}>{solverStatus.value}</span>
+          </div>
+          <div className="log-container">
+            {solverStatus.log.map((entry, i) => (
+              <div key={i} className="log-entry">{entry}</div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {isGameWon && (
+        <WinModal
+          onClose={() => setIsGameWon(false)}
+          difficulty={difficulty}
+          onPlayAgain={() => startNewGame(difficulty)}
+        />
+      )}
+
+      <div className="hero-section">
         <h1>{isLightMode ? 'Sudoku Solar' : 'Sudoku Cosmic'}</h1>
 
         {/* Theme Toggle */}
@@ -93,6 +228,9 @@ function App() {
           <button onClick={() => startNewGame('easy')}>Initiate Easy</button>
           <button onClick={() => startNewGame('medium')}>Initiate Medium</button>
           <button onClick={() => startNewGame('hard')}>Initiate Hard</button>
+          <button onClick={solveStepByStep} style={{ borderColor: isLightMode ? '#0066cc' : '#ff00ff', color: isLightMode ? '#0066cc' : '#ff00ff' }} disabled={isSolving}>
+            {isSolving ? 'Solving...' : 'Solve'}
+          </button>
         </div>
       </div>
     </>

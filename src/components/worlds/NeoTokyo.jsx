@@ -11,34 +11,22 @@ export function NeoTokyo({ isLightMode }) {
     const buildings = useMemo(() => {
         const temp = [];
         for (let i = 0; i < count; i++) {
-            const x = (Math.random() - 0.5) * 50;
-            const z = (Math.random() - 0.5) * 50 - 20;
+            const x = (Math.random() - 0.5) * 80;
+            const z = (Math.random() - 0.5) * 50 - 40; // Push further back: -65 to -15 range
             const y = Math.random() * 5 + 2;
-            temp.push({ x, z, scale: [Math.random() * 2 + 1, y * 5, Math.random() * 2 + 1] });
+            temp.push({ x, z, scale: [Math.random() * 2 + 2, y * 5, Math.random() * 2 + 2] });
         }
         return temp;
     }, []);
 
     useFrame(() => {
         if (!meshRef.current) return;
-
-        // Only update matrices once or slightly rotate to save perf
-        // Constant updating might be glitchy if not handled well
-        // Let's just set them once in a layout effect or similar if they were static
-        // But design doc said "Slow rotation around city" -> Camera moves. Buildings are static?
-        // Let's keep them static to ensure they render.
-
-        // Actually, let's just render them static.
     });
 
-    // Use a layout effect to set positions ONCE
-    useMemo(() => {
-        // We can't set matrices here easily without ref access, wait for ref.
-    }, []);
+    useMemo(() => { }, []);
 
     useFrame(() => {
         if (!meshRef.current) return;
-        // Ensure they are set at least once
         buildings.forEach((data, i) => {
             dummy.position.set(data.x, -10, data.z);
             dummy.scale.set(data.scale[0], data.scale[1], data.scale[2]);
@@ -48,8 +36,8 @@ export function NeoTokyo({ isLightMode }) {
         meshRef.current.instanceMatrix.needsUpdate = true;
     });
 
-    const color = isLightMode ? "#e0e0e0" : "#ff00ff"; // Brighter color for dark mode test
-    const emissive = isLightMode ? "#ffffff" : "#ff00ff";
+    const color = isLightMode ? "#e0e0e0" : "#1a0b2e";
+    const emissive = isLightMode ? "#ffffff" : "#4b0082";
     const fogColor = isLightMode ? "#f0f8ff" : "#050005";
 
     return (
@@ -65,11 +53,7 @@ export function NeoTokyo({ isLightMode }) {
                 />
             </instancedMesh>
 
-            {/* Grid Floor */}
-            <gridHelper
-                args={[100, 50, isLightMode ? 0x0066cc : 0xff00ff, isLightMode ? 0xcccccc : 0x440044]}
-                position={[0, -10, 0]}
-            />
+
 
             <fog attach="fog" args={[fogColor, 10, 60]} />
         </group>

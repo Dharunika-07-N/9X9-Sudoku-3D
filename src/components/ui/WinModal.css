@@ -1,0 +1,199 @@
+.win-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    animation: fadeIn 0.5s ease;
+}
+
+.win-modal-content {
+    background: rgba(20, 0, 20, 0.9);
+    border: 2px solid #ff00ff;
+    border-radius: 20px;
+    padding: 3rem;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(255, 0, 255, 0.5);
+    max-width: 400px;
+    width: 90%;
+    position: relative;
+    overflow: hidden;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Gift Box Styles */
+.gift-box {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    cursor: pointer;
+    position: relative;
+    animation: bounce 2s infinite;
+    transform-style: preserve-3d;
+}
+
+.gift-body {
+    width: 100%;
+    height: 80%;
+    background: linear-gradient(135deg, #ff00ff, #aa00aa);
+    position: absolute;
+    bottom: 0;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.gift-lid {
+    width: 110%;
+    height: 25%;
+    background: linear-gradient(135deg, #00ffff, #00aaaa);
+    position: absolute;
+    top: 15%;
+    left: -5%;
+    border-radius: 5px;
+    z-index: 2;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.click-hint {
+    color: white;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: bold;
+    font-size: 1.2rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.gift-box:hover .click-hint {
+    opacity: 1;
+}
+
+.gift-box:hover {
+    animation: shake 0.5s ease infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes shake {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(5deg);
+    }
+
+    75% {
+        transform: rotate(-5deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+/* Congratulations Styles */
+.congratulations h2 {
+    font-family: 'Orbitron', sans-serif;
+    color: #00ffff;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-shadow: 0 0 10px #00ffff;
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.score-display {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1.5rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    margin-bottom: 2rem;
+    animation: slideUp 0.5s ease 0.2s backwards;
+}
+
+.score-display .label {
+    display: block;
+    color: #ccc;
+    font-size: 0.9rem;
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+}
+
+.score-display .value {
+    display: block;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 3rem;
+    color: #ff00ff;
+    text-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+}
+
+.play-again-btn {
+    background: linear-gradient(90deg, #ff00ff, #00ffff);
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+    animation: fadeIn 0.5s ease 0.5s backwards;
+}
+
+.play-again-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(255, 0, 255, 0.6);
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
