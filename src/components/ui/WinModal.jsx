@@ -70,7 +70,7 @@ export function WinModal({ onClose, difficulty, onPlayAgain, onNextLevel, wasAut
                                 <span className="value">{points}</span>
                             </div>
                         )}
-                        <p className="message">{wasAutoSolved ? 'Solution provided by Mission Control AI' : 'Puzzle Complete!'}</p>
+                        <p className="message">{wasAutoSolved ? 'AI solution does not count towards progression. Clear the level manually to unlock the next sector!' : 'Puzzle Complete!'}</p>
                         <div className="action-buttons">
                             <button className="play-again-btn" onClick={onPlayAgain}>
                                 Replay Level

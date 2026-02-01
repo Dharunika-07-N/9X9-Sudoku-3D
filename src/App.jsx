@@ -290,7 +290,7 @@ function App() {
           onClose={() => setIsGameWon(false)}
           difficulty={difficulty}
           onPlayAgain={() => startNewGame(level)}
-          onNextLevel={handleNextLevel}
+          onNextLevel={wasAutoSolved ? null : handleNextLevel}
           wasAutoSolved={wasAutoSolved}
         />
       )}
