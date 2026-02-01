@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { generateSudoku, BLANK, isValid } from './game/sudokuGenerator';
 import { SudokuBoard } from './components/ui/SudokuBoard';
 import { WinModal } from './components/ui/WinModal';
+import { LevelMap } from './components/ui/LevelMap';
 import './App.css';
 
 function App() {
@@ -21,6 +22,8 @@ function App() {
   });
   const solvingRef = useRef(false);
 
+  const [view, setView] = useState('map'); // 'map' or 'game'
+
   const [level, setLevel] = useState(() => parseInt(localStorage.getItem('sudoku-level') || '1'));
 
   useEffect(() => {
@@ -28,8 +31,10 @@ function App() {
   }, [level]);
 
   useEffect(() => {
-    startNewGame(level);
-  }, []);
+    if (view === 'game') {
+      startNewGame(level);
+    }
+  }, [view]);
 
   // Update Body class for global variables
   useEffect(() => {
@@ -42,7 +47,7 @@ function App() {
 
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (!selectedCell || isSolving || isGameWon) return;
+      if (view !== 'game' || !selectedCell || isSolving || isGameWon) return;
       const { row, col } = selectedCell;
 
       if (game.initial[row][col] !== BLANK) return;
@@ -64,18 +69,12 @@ function App() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedCell, board, game, isSolving, isGameWon]);
+  }, [selectedCell, board, game, isSolving, isGameWon, view]);
 
   const startNewGame = (diffOrLevel = level) => {
     solvingRef.current = false;
     setIsSolving(false);
     setIsGameWon(false);
-
-    // If it's a string (easy/medium/hard), we don't change the numeric level state conceptually,
-    // or we could map it. Let's just pass it through.
-    // If it's a number, we update the level state if needed?
-    // Let's decide: "Levels" is the main way.
-    // If user clicks "Easy", that's Level 1. "Medium" -> Level 10. "Hard" -> Level 20.
 
     let newLevel = diffOrLevel;
     if (typeof diffOrLevel === 'string') {
@@ -196,10 +195,39 @@ function App() {
     }
   };
 
+  if (view === 'map') {
+    return (
+      <LevelMap
+        currentLevel={level}
+        onSelectLevel={(lvl) => {
+          setLevel(lvl);
+          setView('game');
+        }}
+        isLightMode={isLightMode}
+      />
+    );
+  }
+
   return (
     <div className="hero-section">
-      <div className="theme-toggle" onClick={() => setIsLightMode(!isLightMode)} title="Toggle Theme">
-        {isLightMode ? '☀️' : '🌑'}
+      <div className="top-actions" style={{
+        position: 'absolute',
+        top: '2rem',
+        left: '2rem',
+        right: '2rem',
+        display: 'flex',
+        justifyContent: 'space-between',
+        zIndex: 10
+      }}>
+        <button onClick={() => setView('map')} className="back-btn">
+          &larr; MAP
+        </button>
+        <div className="theme-toggle" onClick={() => setIsLightMode(!isLightMode)} title="Toggle Theme" style={{
+          position: 'static',
+          margin: 0
+        }}>
+          {isLightMode ? '☀️' : '🌑'}
+        </div>
       </div>
 
       <h1>{isLightMode ? 'Sudoku Solar' : 'Sudoku Cosmic'}</h1>
@@ -216,9 +244,7 @@ function App() {
       />
 
       <div className="controls">
-        <button onClick={() => startNewGame('easy')}>Reset to Level 1</button>
-        <button onClick={() => startNewGame('medium')}>Skip to Level 10</button>
-        <button onClick={() => startNewGame('hard')}>Skip to Level 20</button>
+        <button onClick={() => startNewGame(level)}>Restart Level</button>
         <button
           onClick={solveStepByStep}
           style={{ borderColor: isLightMode ? '#0066cc' : '#ff00ff', color: isLightMode ? '#0066cc' : '#ff00ff' }}
@@ -234,7 +260,7 @@ function App() {
       </div>
 
       {isSolving && (
-        <div className="solver-status-panel" style={{ position: 'absolute', top: '2rem', left: '2rem', right: 'auto', transform: 'none' }}>
+        <div className="solver-status-panel" style={{ position: 'absolute', top: '5rem', left: '2rem', right: 'auto', transform: 'none' }}>
           <h3>Solver Logic</h3>
           <div className="status-item">
             <span className="label">Action:</span>
@@ -267,5 +293,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;

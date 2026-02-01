@@ -241,3 +241,26 @@ button:active {
 .theme-toggle:hover {
   transform: rotate(15deg) scale(1.1);
 }
+
+.back-btn {
+  background: var(--glass-bg);
+  border: 2px solid var(--primary-color);
+  color: var(--text-color);
+  font-family: 'Orbitron', sans-serif;
+  font-weight: bold;
+  padding: 0.8rem 1.5rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(var(--glass-blur));
+}
+
+.back-btn:hover {
+  background: var(--primary-color);
+  color: #fff;
+  transform: translateX(-5px);
+}
+
+.top-actions {
+  pointer-events: auto;
+}

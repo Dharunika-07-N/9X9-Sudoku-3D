@@ -1,0 +1,205 @@
+.level-map-container {
+    width: 100vw;
+    height: 100vh;
+    overflow-y: auto;
+    background: linear-gradient(180deg, #ffccf2 0%, #cc99ff 100%);
+    /* Sweet pink theme */
+    position: relative;
+    display: flex;
+    justify-content: center;
+    scroll-behavior: smooth;
+}
+
+.level-map-container.dark-mode {
+    background: linear-gradient(180deg, #2d1b33 0%, #1a0f1d 100%);
+}
+
+.map-content {
+    width: 100%;
+    max-width: 500px;
+    height: fit-content;
+    position: relative;
+    padding: 150px 0;
+    z-index: 1;
+}
+
+.path-background {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 100%;
+    background: repeating-linear-gradient(45deg,
+            rgba(255, 153, 204, 0.4),
+            rgba(255, 153, 204, 0.4) 20px,
+            rgba(255, 255, 255, 0.4) 20px,
+            rgba(255, 255, 255, 0.4) 40px);
+    border-radius: 50px;
+    z-index: 0;
+}
+
+.levels-list {
+    position: relative;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 40px;
+    z-index: 2;
+    width: 100%;
+}
+
+.level-node-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    height: 120px;
+}
+
+.level-node {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #666;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 10px 0 #ddd, 0 15px 25px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    border: 8px solid #fff;
+}
+
+.level-node:hover {
+    transform: scale(1.1) translateY(-5px) !important;
+    box-shadow: 0 15px 0 #ddd, 0 25px 30px rgba(0, 0, 0, 0.3);
+}
+
+.level-node.locked {
+    background: #b3b3b3;
+    color: #888;
+    box-shadow: 0 10px 0 #888;
+    cursor: not-allowed;
+    filter: grayscale(1);
+    opacity: 0.7;
+}
+
+.level-node.completed {
+    background: linear-gradient(135deg, #ff9900, #ffcc00);
+    color: #fff;
+    box-shadow: 0 10px 0 #cc7a00, 0 15px 25px rgba(0, 0, 0, 0.2);
+    border-color: #fff5e6;
+}
+
+.level-node.current {
+    background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+    color: #fff;
+    box-shadow: 0 10px 0 #2a5a9d, 0 0 40px rgba(0, 210, 255, 0.8);
+    animation: bounceNode 2s infinite ease-in-out;
+    z-index: 10;
+}
+
+@keyframes bounceNode {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1.2);
+    }
+
+    50% {
+        transform: translateY(-20px) scale(1.25);
+    }
+}
+
+/* Winding Path Logic */
+.level-node-wrapper:nth-child(4n+1) .level-node {
+    transform: translateX(0);
+}
+
+.level-node-wrapper:nth-child(4n+2) .level-node {
+    transform: translateX(130px);
+}
+
+.level-node-wrapper:nth-child(4n+3) .level-node {
+    transform: translateX(0);
+}
+
+.level-node-wrapper:nth-child(4n+4) .level-node {
+    transform: translateX(-130px);
+}
+
+/* Ensure current node includes its zig-zag position in the animation base */
+.level-node-wrapper:nth-child(4n+1) .level-node.current {
+    transform-origin: center;
+}
+
+.level-node-wrapper:nth-child(4n+2) .level-node.current {
+    transform: translateX(130px) scale(1.2);
+}
+
+.level-node-wrapper:nth-child(4n+4) .level-node.current {
+    transform: translateX(-130px) scale(1.2);
+}
+
+.map-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(15px);
+    z-index: 100;
+    text-align: center;
+    border-bottom: 3px solid #ff99cc;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.map-header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    background: linear-gradient(45deg, #ff00ff, #00ffff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.star-rating {
+    position: absolute;
+    bottom: -30px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    gap: 4px;
+}
+
+.star {
+    font-size: 1.2rem;
+    color: #FFD700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Decor Elements */
+.decor {
+    position: absolute;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.candy {
+    font-size: 3rem;
+    filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
+}
+
+.cloud {
+    background: #fff;
+    border-radius: 50px;
+    width: 120px;
+    height: 40px;
+    opacity: 0.7;
+}
