@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { FluidPaintBackground } from '../effects/FluidPaintBackground';
 import './LevelMap.css';
 
 export function LevelMap({ currentLevel, onSelectLevel, isLightMode }) {
@@ -14,33 +15,31 @@ export function LevelMap({ currentLevel, onSelectLevel, isLightMode }) {
         }, 300);
     }, []);
 
-    // Generate random stars
-    const stars = Array.from({ length: 100 }, (_, i) => ({
-        id: i,
-        top: `${Math.random() * 100}%`,
-        left: `${Math.random() * 100}%`,
-        speed: `${2 + Math.random() * 3}s`
-    }));
+    const handleNodeMouseMove = (e) => {
+        const node = e.currentTarget;
+        const rect = node.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+
+        const rotateX = (y - centerY) / 5;
+        const rotateY = (centerX - x) / 5;
+
+        node.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.1, 1.1, 1.1)`;
+    };
+
+    const handleNodeMouseLeave = (e) => {
+        e.currentTarget.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+    };
 
     return (
         <div className={`level-map-container ${!isLightMode ? 'dark-mode' : ''}`} ref={mapRef}>
-            {/* Background Decorations */}
-            <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 0 }}>
-                {stars.map(star => (
-                    <div
-                        key={star.id}
-                        className="decor small-star"
-                        style={{
-                            top: star.top,
-                            left: star.left,
-                            '--speed': star.speed
-                        }}
-                    />
-                ))}
-            </div>
+            {/* Interactive 3D Background */}
+            <FluidPaintBackground isLightMode={isLightMode} />
 
             <div className="map-header">
-                <h1>SUDOKU JOURNEY</h1>
+                <h1 className="three-d-title">SUDOKU JOURNEY</h1>
                 <div style={{
                     fontSize: '1.2rem',
                     fontWeight: 'bold',
@@ -72,20 +71,6 @@ export function LevelMap({ currentLevel, onSelectLevel, isLightMode }) {
             <div className="map-content">
                 <div className="path-background"></div>
 
-                {/* Decorative Elements */}
-                <div className="decor nebula" style={{ top: '300px', left: '-100px', background: '#ff00ff' }}></div>
-                <div className="decor nebula" style={{ top: '1200px', right: '-100px', background: '#00ffff' }}></div>
-                <div className="decor nebula" style={{ top: '2500px', left: '100px', background: '#6400ff' }}></div>
-
-                {/* Light Mode Clouds */}
-                <div className="decor cloud" style={{ top: '150px', left: '10%' }}></div>
-                <div className="decor cloud" style={{ top: '450px', right: '15%' }}></div>
-                <div className="decor cloud" style={{ top: '800px', left: '20%' }}></div>
-                <div className="decor cloud" style={{ top: '1100px', right: '10%' }}></div>
-                <div className="decor cloud" style={{ top: '1500px', left: '15%' }}></div>
-                <div className="decor cloud" style={{ top: '1900px', right: '20%' }}></div>
-                <div className="decor cloud" style={{ top: '2300px', left: '10%' }}></div>
-
                 <div className="levels-list">
                     {levels.map((lvl) => {
                         const isLocked = lvl > currentLevel;
@@ -101,6 +86,8 @@ export function LevelMap({ currentLevel, onSelectLevel, isLightMode }) {
                             <div key={lvl} className="level-node-wrapper">
                                 <div
                                     className={`level-node ${statusClass}`}
+                                    onMouseMove={(e) => !isLocked && handleNodeMouseMove(e)}
+                                    onMouseLeave={handleNodeMouseLeave}
                                     onClick={() => !isLocked && onSelectLevel(lvl)}
                                 >
                                     <span className="level-number">{lvl}</span>
@@ -112,18 +99,7 @@ export function LevelMap({ currentLevel, onSelectLevel, isLightMode }) {
                                         </div>
                                     )}
                                     {isCurrent && (
-                                        <div style={{
-                                            position: 'absolute',
-                                            top: '-40px',
-                                            background: isLightMode ? '#0066cc' : '#00ffff',
-                                            color: isLightMode ? '#fff' : '#000',
-                                            padding: '4px 12px',
-                                            borderRadius: '20px',
-                                            fontSize: '0.8rem',
-                                            fontWeight: 'bold',
-                                            whiteSpace: 'nowrap',
-                                            boxShadow: '0 4px 10px rgba(0,0,0,0.2)'
-                                        }}>
+                                        <div className="current-indicator">
                                             YOU ARE HERE
                                         </div>
                                     )}

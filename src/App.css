@@ -253,12 +253,15 @@ button:active {
   cursor: pointer;
   transition: all 0.3s ease;
   backdrop-filter: blur(var(--glass-blur));
+  transform-style: preserve-3d;
+  perspective: 1000px;
 }
 
 .back-btn:hover {
   background: var(--primary-color);
   color: #fff;
-  transform: translateX(-5px);
+  transform: translateZ(10px) translateX(-5px);
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.3);
 }
 
 .top-actions {
