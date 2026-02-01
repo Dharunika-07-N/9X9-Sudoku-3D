@@ -203,7 +203,7 @@ function App() {
       </div>
 
       {isSolving && (
-        <div className="solver-status-panel" style={{ position: 'absolute', top: '2rem', left: '2rem' }}>
+        <div className="solver-status-panel" style={{ position: 'absolute', top: '2rem', left: '2rem', right: 'auto', transform: 'none' }}>
           <h3>Solver Logic</h3>
           <div className="status-item">
             <span className="label">Action:</span>
