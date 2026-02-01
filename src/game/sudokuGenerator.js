@@ -51,7 +51,14 @@ export function generateSudoku(difficulty = 'easy') {
   const solution = board.map(row => [...row]);
 
   // Remove digits based on difficulty
-  let attempts = difficulty === 'hard' ? 50 : difficulty === 'medium' ? 40 : 30;
+  let attempts;
+  if (typeof difficulty === 'number') {
+    // Level 1 starts at 30 blanks. Increases by 1 every level.
+    // Capped at 60 blanks.
+    attempts = Math.min(60, 29 + difficulty);
+  } else {
+    attempts = difficulty === 'hard' ? 50 : difficulty === 'medium' ? 40 : 30;
+  }
 
   while (attempts > 0) {
     let row = Math.floor(Math.random() * 9);

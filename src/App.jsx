@@ -21,8 +21,14 @@ function App() {
   });
   const solvingRef = useRef(false);
 
+  const [level, setLevel] = useState(() => parseInt(localStorage.getItem('sudoku-level') || '1'));
+
   useEffect(() => {
-    startNewGame();
+    localStorage.setItem('sudoku-level', level);
+  }, [level]);
+
+  useEffect(() => {
+    startNewGame(level);
   }, []);
 
   // Update Body class for global variables
@@ -60,15 +66,37 @@ function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedCell, board, game, isSolving, isGameWon]);
 
-  const startNewGame = (diff = 'easy') => {
+  const startNewGame = (diffOrLevel = level) => {
     solvingRef.current = false;
     setIsSolving(false);
     setIsGameWon(false);
-    setDifficulty(diff);
-    const newGame = generateSudoku(diff);
+
+    // If it's a string (easy/medium/hard), we don't change the numeric level state conceptually,
+    // or we could map it. Let's just pass it through.
+    // If it's a number, we update the level state if needed?
+    // Let's decide: "Levels" is the main way.
+    // If user clicks "Easy", that's Level 1. "Medium" -> Level 10. "Hard" -> Level 20.
+
+    let newLevel = diffOrLevel;
+    if (typeof diffOrLevel === 'string') {
+      if (diffOrLevel === 'easy') newLevel = 1;
+      if (diffOrLevel === 'medium') newLevel = 10;
+      if (diffOrLevel === 'hard') newLevel = 20;
+    }
+
+    setLevel(newLevel);
+    setDifficulty(newLevel); // Difficulty is now numeric mostly
+
+    const newGame = generateSudoku(newLevel);
     setGame(newGame);
     setBoard(newGame.initial.map(row => [...row]));
     setSelectedCell(null);
+  };
+
+  const handleNextLevel = () => {
+    const nextLevel = level + 1;
+    setLevel(nextLevel);
+    startNewGame(nextLevel);
   };
 
   const checkWin = (currentBoard) => {
@@ -175,6 +203,9 @@ function App() {
       </div>
 
       <h1>{isLightMode ? 'Sudoku Solar' : 'Sudoku Cosmic'}</h1>
+      <h2 style={{ fontFamily: 'Rajdhani', margin: '0 0 1rem 0', color: isLightMode ? '#666' : '#ccc' }}>
+        LEVEL {level}
+      </h2>
 
       <SudokuBoard
         board={board}
@@ -185,15 +216,15 @@ function App() {
       />
 
       <div className="controls">
-        <button onClick={() => startNewGame('easy')}>Easy</button>
-        <button onClick={() => startNewGame('medium')}>Medium</button>
-        <button onClick={() => startNewGame('hard')}>Hard</button>
+        <button onClick={() => startNewGame('easy')}>Reset to Level 1</button>
+        <button onClick={() => startNewGame('medium')}>Skip to Level 10</button>
+        <button onClick={() => startNewGame('hard')}>Skip to Level 20</button>
         <button
           onClick={solveStepByStep}
           style={{ borderColor: isLightMode ? '#0066cc' : '#ff00ff', color: isLightMode ? '#0066cc' : '#ff00ff' }}
           disabled={isSolving}
         >
-          {isSolving ? 'Solving...' : 'Solve'}
+          {isSolving ? 'Auto-Solve' : 'Solve'}
         </button>
       </div>
 
@@ -229,7 +260,8 @@ function App() {
         <WinModal
           onClose={() => setIsGameWon(false)}
           difficulty={difficulty}
-          onPlayAgain={() => startNewGame(difficulty)}
+          onPlayAgain={() => startNewGame(level)}
+          onNextLevel={handleNextLevel}
         />
       )}
     </div>
