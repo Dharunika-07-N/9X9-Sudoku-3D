@@ -61,7 +61,7 @@ This document outlines the complete roadmap to build and deploy "Sudoku Adventur
 
 ## Phase 4: UI/UX & Components (3D WebGL UI)
 - [ ] **Design System Implementation**
-    - [ ] Define Color Palette (Magenta #FF00FF, Deep Black, etc.).
+    - [ ] Define Color Palette (Magenta #0080ffff, Deep Black, etc.).
     - [ ] Load Custom Fonts (SDF Textures for 3D).
 - [ ] **3D Components**
     - [ ] **3D Buttons**:

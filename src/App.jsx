@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { generateSudoku, BLANK, isValid } from './game/sudokuGenerator';
-import { Experience } from './components/Experience';
+import { SudokuBoard } from './components/ui/SudokuBoard';
 import { WinModal } from './components/ui/WinModal';
 import './App.css';
 
@@ -169,19 +169,41 @@ function App() {
   };
 
   return (
-    <>
-      <div className="board-wrapper">
-        <Experience
-          board={board}
-          initialBoard={game?.initial}
-          onCellClick={handleCellClick}
-          selectedCell={selectedCell}
-          isLightMode={isLightMode}
-        />
+    <div className="hero-section">
+      <div className="theme-toggle" onClick={() => setIsLightMode(!isLightMode)} title="Toggle Theme">
+        {isLightMode ? '☀️' : '🌑'}
+      </div>
+
+      <h1>{isLightMode ? 'Sudoku Solar' : 'Sudoku Cosmic'}</h1>
+
+      <SudokuBoard
+        board={board}
+        initialBoard={game?.initial}
+        onCellClick={handleCellClick}
+        selectedCell={selectedCell}
+        isLightMode={isLightMode}
+      />
+
+      <div className="controls">
+        <button onClick={() => startNewGame('easy')}>Easy</button>
+        <button onClick={() => startNewGame('medium')}>Medium</button>
+        <button onClick={() => startNewGame('hard')}>Hard</button>
+        <button
+          onClick={solveStepByStep}
+          style={{ borderColor: isLightMode ? '#0066cc' : '#ff00ff', color: isLightMode ? '#0066cc' : '#ff00ff' }}
+          disabled={isSolving}
+        >
+          {isSolving ? 'Solving...' : 'Solve'}
+        </button>
+      </div>
+
+      <div className="instructions-panel" style={{ position: 'relative', top: 'auto', left: 'auto', marginTop: '2rem' }}>
+        <p>COMMAND CENTER</p>
+        <p>Select Cell • Type 1-9 • Navigation Keys</p>
       </div>
 
       {isSolving && (
-        <div className="solver-status-panel">
+        <div className="solver-status-panel" style={{ position: 'absolute', top: '2rem', left: '2rem' }}>
           <h3>Solver Logic</h3>
           <div className="status-item">
             <span className="label">Action:</span>
@@ -210,30 +232,7 @@ function App() {
           onPlayAgain={() => startNewGame(difficulty)}
         />
       )}
-
-      <div className="hero-section">
-        <h1>{isLightMode ? 'Sudoku Solar' : 'Sudoku Cosmic'}</h1>
-
-        {/* Theme Toggle */}
-        <div className="theme-toggle" onClick={() => setIsLightMode(!isLightMode)} title="Toggle Theme">
-          {isLightMode ? '☀️' : '🌑'}
-        </div>
-
-        <div className="instructions-panel">
-          <p>COMMAND CENTER</p>
-          <p>Select Cell • Type 1-9 • Navigation Keys</p>
-        </div>
-
-        <div className="controls">
-          <button onClick={() => startNewGame('easy')}>Initiate Easy</button>
-          <button onClick={() => startNewGame('medium')}>Initiate Medium</button>
-          <button onClick={() => startNewGame('hard')}>Initiate Hard</button>
-          <button onClick={solveStepByStep} style={{ borderColor: isLightMode ? '#0066cc' : '#ff00ff', color: isLightMode ? '#0066cc' : '#ff00ff' }} disabled={isSolving}>
-            {isSolving ? 'Solving...' : 'Solve'}
-          </button>
-        </div>
-      </div>
-    </>
+    </div>
   );
 }
 
