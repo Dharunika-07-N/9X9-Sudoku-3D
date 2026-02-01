@@ -57,6 +57,13 @@ export function WinModal({ onClose, difficulty, onPlayAgain, onNextLevel, wasAut
                 ) : (
                     <div className="congratulations">
                         <h2>{wasAutoSolved ? 'AI SOLVE COMPLETE' : 'CONGRATULATIONS!'}</h2>
+
+                        <div className="star-rating-modal">
+                            <span className="star-large">★</span>
+                            <span className="star-large pulse">★</span>
+                            <span className="star-large">★</span>
+                        </div>
+
                         {!wasAutoSolved && (
                             <div className="score-display">
                                 <span className="label">SCORE</span>
