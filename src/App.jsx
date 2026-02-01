@@ -25,6 +25,7 @@ function App() {
   const [view, setView] = useState('map'); // 'map' or 'game'
 
   const [level, setLevel] = useState(() => parseInt(localStorage.getItem('sudoku-level') || '1'));
+  const [wasAutoSolved, setWasAutoSolved] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('sudoku-level', level);
@@ -75,6 +76,7 @@ function App() {
     solvingRef.current = false;
     setIsSolving(false);
     setIsGameWon(false);
+    setWasAutoSolved(false);
 
     let newLevel = diffOrLevel;
     if (typeof diffOrLevel === 'string') {
@@ -131,6 +133,7 @@ function App() {
     const currentBoard = game.initial.map(row => [...row]);
     setBoard(currentBoard.map(row => [...row]));
     setIsSolving(true);
+    setWasAutoSolved(true);
     setSolverStatus({ action: 'Starting...', cell: '-', value: '-', log: [] });
     solvingRef.current = true;
 
@@ -288,6 +291,7 @@ function App() {
           difficulty={difficulty}
           onPlayAgain={() => startNewGame(level)}
           onNextLevel={handleNextLevel}
+          wasAutoSolved={wasAutoSolved}
         />
       )}
     </div>

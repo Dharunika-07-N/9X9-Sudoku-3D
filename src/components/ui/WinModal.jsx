@@ -2,7 +2,7 @@ import { useState } from 'react';
 import confetti from 'canvas-confetti';
 import './WinModal.css';
 
-export function WinModal({ onClose, difficulty, onPlayAgain, onNextLevel }) {
+export function WinModal({ onClose, difficulty, onPlayAgain, onNextLevel, wasAutoSolved }) {
     const [isOpened, setIsOpened] = useState(false);
 
     const points = {
@@ -56,12 +56,14 @@ export function WinModal({ onClose, difficulty, onPlayAgain, onNextLevel }) {
                     </div>
                 ) : (
                     <div className="congratulations">
-                        <h2>CONGRATULATIONS!</h2>
-                        <div className="score-display">
-                            <span className="label">SCORE</span>
-                            <span className="value">{points}</span>
-                        </div>
-                        <p className="message">Puzzle Complete!</p>
+                        <h2>{wasAutoSolved ? 'AI SOLVE COMPLETE' : 'CONGRATULATIONS!'}</h2>
+                        {!wasAutoSolved && (
+                            <div className="score-display">
+                                <span className="label">SCORE</span>
+                                <span className="value">{points}</span>
+                            </div>
+                        )}
+                        <p className="message">{wasAutoSolved ? 'Solution provided by Mission Control AI' : 'Puzzle Complete!'}</p>
                         <div className="action-buttons">
                             <button className="play-again-btn" onClick={onPlayAgain}>
                                 Replay Level
